@@ -1,4 +1,4 @@
-![icub](./assets/icub.png)
+![icub](https://github.com/icub-tech-iit/.github/blob/master/profile/assets/icub.png)
 
 ## iCub Tech 🤖
 
