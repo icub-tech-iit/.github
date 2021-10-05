@@ -1,0 +1,5 @@
+{
+    "name": "Create Mentioning Comment Workflow",
+    "description": "Workflow template for creating a mentioning comment within the outside-collaborators automated repositories.",
+    "iconName": "icon-speech-bubble"
+}
