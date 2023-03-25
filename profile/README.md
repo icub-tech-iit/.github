@@ -1,6 +1,6 @@
 ![icub](https://github.com/icub-tech-iit/.github/blob/master/profile/assets/icub.png)
 
-## iCub Tech 🤖
+# iCub Tech 🤖
 
 Our humanoid robot, the iCub™ (I as in “I robot”, Cub as in the man-cub from Kipling’s Jungle Book), has been specifically designed
 to support research in embodied artificial intelligence (AI). At 104 cm tall, the iCub has the size of a five-year-old child.
@@ -17,6 +17,14 @@ collaboration with several research lines at IIT, international academic partner
 [**🌐 iCub Tech website**](https://www.iit.it/web/icub-tech)
 
 ## 🔗 Useful resources
+
+### 📖 `Documentation`
+Check out our online [documentation](https://icub-tech-iit.github.io/documentation).
+
+Other technical resources we made public:
+- [Mechanics](https://github.com/icub-tech-iit/cad-mechanics-public)
+- [Electronics](https://github.com/icub-tech-iit/electronics-boards-public)
+- [Wiring](https://github.com/icub-tech-iit/electronics-wiring-public)
 
 ### 🛠 `HW Support`
 To get support for robot maintenance and more in general for hardware-related issues, please visit our [robot specific tickets system](https://github.com/robotology/icub-tech-support) on GitHub.
