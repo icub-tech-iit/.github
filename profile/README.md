@@ -15,3 +15,11 @@ of the near future. We take a 360-degree approach to robotics including mechanic
 collaboration with several research lines at IIT, international academic partners, as well as a selected number of industrial stakeholders.
 
 [**🌐 iCub Tech website**](https://www.iit.it/web/icub-tech)
+
+## 🔗 Useful resources
+
+### 🛠 `HW Support`
+To get support for robot maintenance and more in general for hardware-related issues, please visit our [robot specific tickets system](https://github.com/robotology/icub-tech-support) on GitHub.
+
+### 🗣️ `Community`
+To discuss general topics and SW specific questions, please visit our [community](https://github.com/robotology/community).
