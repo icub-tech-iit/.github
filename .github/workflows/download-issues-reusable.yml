@@ -1,0 +1,73 @@
+# Location: .github/.github/workflows/download-issues-reusable.yml (in your org's central repo)
+name: Reusable Download Issues Logic
+
+on:
+  # This allows other repos to call this workflow
+  workflow_call:
+    secrets:
+      GH_ASSET_SCRAPER_PAT:
+        required: true
+
+jobs:
+  Retrieve:
+    name: "Retrieve"
+    runs-on: ubuntu-latest
+    
+    # Context note: When called, ${{ github.repository }} refers to the CALLER repo,
+    # so your logic works perfectly without modification.
+    steps:
+      - name: Install tools
+        run: |
+          pip install --break-system-packages --user --upgrade setuptools
+          pip install --break-system-packages --user gh2md
+          sudo gem install octokit uri open3
+       
+      - name: Retrieve Issues and PRs
+        run: |
+          ${HOME}/.local/bin/gh2md ${{ github.repository }} docs/md --multiple-files --idempotent
+        env:
+          # In reusable workflows, GITHUB_TOKEN is the caller's token (correct context)
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Scrape markdown assets
+        run: |
+          curl -O https://raw.githubusercontent.com/icub-tech-iit/.github/master/scripts/asset-scraper.rb
+          chmod +x ./asset-scraper.rb
+          ./asset-scraper.rb ${{ github.repository }} docs/md docs/md/assets assets
+        env:
+          # This secret must be passed from the caller
+          GH_ASSET_SCRAPER_PAT: ${{ secrets.GH_ASSET_SCRAPER_PAT }}
+
+      - name: Get repo name
+        run: |
+          echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV    
+      
+      - name: Compress and split docs directory
+        run: |
+          if [ ! -d "docs" ]; then
+            echo "Error: docs directory not found"
+            exit 1
+          fi
+          
+          DOCS_SIZE=$(du -sb docs | awk '{print $1}')
+          THRESHOLD=$((2 * 1024 * 1024 * 1024))
+          
+          mkdir -p artifact-chunks
+          
+          if [ "${DOCS_SIZE}" -gt "${THRESHOLD}" ]; then
+            echo "Directory size (${DOCS_SIZE} bytes) exceeds 2GB. Creating split zip archive..."
+            zip -r -s 2g docs.zip docs/
+            mv docs.z* artifact-chunks/
+          else
+            echo "Directory size (${DOCS_SIZE} bytes) is within 2GB. Creating single zip archive..."
+            zip -r docs.zip docs/
+            mv docs.zip artifact-chunks/
+          fi
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ env.REPO_NAME }}
+          path: artifact-chunks
+          retention-days: 30
+          overwrite: true
