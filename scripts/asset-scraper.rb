@@ -62,10 +62,10 @@ Dir.entries(input_dir).each { |f|
         update_file = false
         URI.extract(text).each { |uri|
             if uri.include?("github.com/user-attachments/assets") || uri.include?(repo + "/assets") then
-                # trimming URL
-                if uri[-1].match(/[^a-zA-z0-9]/) then
-                    uri = uri[0..-2]
-                end
+                # Trimming URL:
+                # Remove any character at the end ($) that is NOT (^) alphanumeric ([a-zA-Z0-9])
+                # The '+' means "one or more", so it handles multiple trailing chars like ")."
+                uri = uri.sub(/[^a-zA-Z0-9]+$/, '')
                 puts  "  🌐 Found asset at URI: \"#{uri}\""
 
                 # download asset
