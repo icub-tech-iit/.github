@@ -90,7 +90,17 @@ Dir.entries(input_dir).each { |f|
 
                 # scrape the file to replace the URL with the local asset
                 print "    🔁 Replacing asset URI with \"#{asset_name_ext}\"... "
-                text = text.gsub(uri, prefix_dir + "/" + File.basename(uri) + "." + ext)
+                
+                local_asset_path = prefix_dir + "/" + File.basename(uri) + "." + ext
+
+                # Check if the mime type indicates a video
+                if mime_type.start_with?("video") then
+                    replacement = "<video controls>\n  <source src=\"#{local_asset_path}\">\n</video>"
+                else
+                    replacement = local_asset_path
+                end
+
+                text = text.gsub(uri, replacement)
                 puts  "✅"
 
                 update_file = true
