@@ -1,0 +1,51 @@
+name: Reusable Generate Docs Logic
+
+on:
+  workflow_call:
+    secrets:
+      GH_ASSET_SCRAPER_PAT:
+        required: true
+
+jobs:
+  Generate:
+    name: "Generate"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install tools
+        run: |
+          pip install --break-system-packages --user --upgrade setuptools
+          pip install --break-system-packages --user gh2md
+          sudo gem install octokit uri open3
+       
+      - name: Generate markdown documentation
+        run: |
+          # ${{ github.repository }} refers to the CALLER repo context
+          ${HOME}/.local/bin/gh2md ${{ github.repository }} docs/md --multiple-files --idempotent
+        env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Scrape markdown assets
+        run: |
+          curl -O https://raw.githubusercontent.com/icub-tech-iit/.github/master/scripts/asset-scraper.rb
+          chmod +x ./asset-scraper.rb
+          ./asset-scraper.rb ${{ github.repository }} docs/md docs/md/assets assets
+        env:
+          GH_ASSET_SCRAPER_PAT: ${{ secrets.GH_ASSET_SCRAPER_PAT }}
+
+      - name: Generate pdf documentation
+        uses: baileyjm02/markdown-to-pdf@v1
+        with:
+          input_path: docs/md
+          output_dir: docs/pdf
+          images_dir: docs/md/assets
+          image_import: assets
+          build_html: false
+       
+      - name: Upload documentation
+        uses: actions/upload-artifact@main
+        with:
+          name: docs
+          path: docs/pdf
+          retention-days: 30
+          overwrite: true
